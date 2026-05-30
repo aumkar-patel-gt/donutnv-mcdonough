@@ -35,10 +35,8 @@ export default async function HomePage() {
 
   return (
     <>
-      <AlertBanner items={announcements} />
-
       {/* Wordmark band under the awning */}
-      <div className="bg-white py-5 text-center">
+      <div className="bg-white pt-5 text-center">
         <Image
           src="/brand/wordmark-web.jpg"
           alt="DonutNV"
@@ -47,6 +45,11 @@ export default async function HomePage() {
           priority
           className="mx-auto h-12 w-auto sm:h-16"
         />
+      </div>
+
+      {/* Announcements appear just under the logo */}
+      <div className="bg-white pt-4">
+        <AlertBanner items={announcements} />
       </div>
 
       {/* HERO: Where are we today */}
