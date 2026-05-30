@@ -106,8 +106,13 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
         </button>
       </div>
 
-      {/* The graphic — fixed Instagram portrait size (1080x1350), scaled to fit screen */}
-      <div className="w-full max-w-[420px] overflow-hidden rounded-xl shadow-2xl">
+      {/* The graphic — fixed Instagram portrait size (1080x1350), scaled to fit
+          screen. Wrapper uses the SCALED dimensions (420x525) so it doesn't
+          reserve the full unscaled height. */}
+      <div
+        className="overflow-hidden rounded-xl shadow-2xl"
+        style={{ width: 420, height: 525 }}
+      >
         <div
           className="origin-top-left"
           style={{ transform: "scale(0.3889)", width: 1080, height: 1350 }}
