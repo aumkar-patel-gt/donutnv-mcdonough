@@ -32,6 +32,26 @@ h3,
 /* DonutNV scalloped awning — solid red band on top with rounded fabric flaps
    bulging downward, alternating bright/dark red like the brand logo.
    Drawn as a repeating SVG so the curves stay crisp at any width. */
+/* Larger, easier-to-read controls inside the owner dashboard */
+.admin-lg {
+  font-size: 1.0625rem;
+}
+.admin-lg input,
+.admin-lg select,
+.admin-lg textarea,
+.admin-lg button {
+  font-size: 1.0625rem;
+}
+.admin-lg input,
+.admin-lg select,
+.admin-lg textarea {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+.admin-lg label {
+  font-size: 1rem;
+}
+
 .awning {
   height: 40px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='40' viewBox='0 0 120 40'%3E%3Cpath d='M0 0 L0 14 Q30 40 60 14 L60 0 Z' fill='%23e11b22'/%3E%3Cpath d='M60 0 L60 14 Q90 40 120 14 L120 0 Z' fill='%23b9151b'/%3E%3C/svg%3E");

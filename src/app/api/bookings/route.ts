@@ -1,5 +1,38 @@
 import { NextResponse } from "next/server";
 import { getServiceSupabase, isSupabaseConfigured } from "@/lib/supabase";
+import { Resend } from "resend";
+
+// Sends an email alert to the owner when a booking comes in.
+// Only runs if RESEND_API_KEY and BOOKING_NOTIFY_EMAIL are set — otherwise
+// it silently skips, so the form keeps working without email configured.
+async function notifyOwner(body: Record<string, string>) {
+  const key = process.env.RESEND_API_KEY;
+  const to = process.env.BOOKING_NOTIFY_EMAIL;
+  if (!key || !to) return;
+  try {
+    const resend = new Resend(key);
+    await resend.emails.send({
+      from: "DonutNV Bookings <onboarding@resend.dev>",
+      to,
+      replyTo: body.email,
+      subject: `New booking request: ${body.eventType || "Event"} — ${body.name}`,
+      text: [
+        `New booking request from the website:`,
+        ``,
+        `Name:  ${body.name}`,
+        `Email: ${body.email}`,
+        `Phone: ${body.phone || "(none)"}`,
+        `Date:  ${body.eventDate || "(none)"}`,
+        `Type:  ${body.eventType || "(none)"}`,
+        ``,
+        `Message:`,
+        body.message || "(none)",
+      ].join("\n"),
+    });
+  } catch (e) {
+    console.error("[booking email failed]", e);
+  }
+}
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
@@ -36,5 +69,8 @@ export async function POST(req: Request) {
   if (error) {
     return NextResponse.json({ error: "Could not save request." }, { status: 500 });
   }
+
+  await notifyOwner(body);
+
   return NextResponse.json({ ok: true, stored: true });
 }

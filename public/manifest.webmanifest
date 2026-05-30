@@ -1,0 +1,19 @@
+{
+  "name": "DonutNV McDonough",
+  "short_name": "DonutNV",
+  "description": "Hot Donuts & Fresh Lemonade — schedule, locations, and updates for DonutNV McDonough.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0e6fd1",
+  "theme_color": "#e11b22",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

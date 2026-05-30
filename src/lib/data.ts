@@ -29,14 +29,23 @@ function mapAnnouncement(row: Record<string, unknown>): Announcement {
 }
 
 export async function getEvents(): Promise<ScheduleEvent[]> {
+  // Only return stops from today onward, so past events automatically
+  // drop off the schedule — the owner never has to delete old ones.
+  const today = new Date();
+  const todayIso = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}-${String(today.getDate()).padStart(2, "0")}`;
+
   const sb = getSupabase();
-  if (!sb) return sampleEvents;
+  if (!sb) return sampleEvents.filter((e) => e.date >= todayIso);
   const { data, error } = await sb
     .from("events")
     .select("*")
+    .gte("date", todayIso)
     .order("date", { ascending: true })
     .order("start_time", { ascending: true });
-  if (error || !data) return sampleEvents;
+  if (error || !data) return sampleEvents.filter((e) => e.date >= todayIso);
   return data.map(mapEvent);
 }
 

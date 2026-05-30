@@ -20,6 +20,20 @@ export const metadata: Metadata = {
   title: "DonutNV McDonough — Hot Donuts • Fresh Lemonade",
   description:
     "Find DonutNV McDonough's weekly schedule, locations, last-minute updates, and book us for your next event!",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "DonutNV",
+    statusBarStyle: "default",
+  },
+  icons: {
+    icon: "/icon-192.png",
+    apple: "/apple-touch-icon.png",
+  },
+};
+
+export const viewport = {
+  themeColor: "#e11b22",
 };
 
 export default function RootLayout({

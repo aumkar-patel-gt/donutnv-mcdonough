@@ -17,11 +17,13 @@ export default async function AdminPage() {
     getBookings(),
   ]);
   return (
-    <AdminDashboard
-      events={events}
-      announcements={announcements}
-      bookings={bookings}
-      dbReady={isSupabaseConfigured}
-    />
+    <div className="admin-lg">
+      <AdminDashboard
+        events={events}
+        announcements={announcements}
+        bookings={bookings}
+        dbReady={isSupabaseConfigured}
+      />
+    </div>
   );
 }
