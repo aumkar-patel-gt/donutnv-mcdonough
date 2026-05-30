@@ -136,38 +136,45 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
 
             {/* days list */}
             <div className="relative mt-6 flex-1 px-10">
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {days.map((d) => {
                   const iso = toIso(d);
                   const dayEvents = byDate.get(iso) ?? [];
                   return (
                     <div
                       key={iso}
-                      className="flex items-stretch overflow-hidden rounded-2xl bg-white/95"
+                      className="flex min-h-[112px] items-stretch overflow-hidden rounded-2xl bg-white/95"
                     >
-                      <div className="flex w-[150px] flex-col items-center justify-center bg-dnv-red px-2 py-3 text-white">
-                        <span className="font-display text-[26px] font-extrabold uppercase leading-none">
+                      <div className="flex w-[160px] flex-col items-center justify-center bg-dnv-red px-2 py-4 text-white">
+                        <span className="font-display text-[30px] font-extrabold uppercase leading-none">
                           {DAY_NAMES[d.getDay()].slice(0, 3)}
                         </span>
-                        <span className="text-[20px] font-bold">
+                        <span className="mt-1 text-[24px] font-bold">
                           {d.getDate()}
                         </span>
                       </div>
-                      <div className="flex flex-1 flex-col justify-center px-5 py-3">
+                      <div className="flex flex-1 flex-col justify-center px-6 py-4">
                         {dayEvents.length === 0 ? (
-                          <span className="text-[24px] font-semibold text-gray-400">
+                          <span className="text-[26px] font-semibold text-gray-400">
                             — No stops —
                           </span>
                         ) : (
                           dayEvents.map((e) => (
-                            <div key={e.id} className="py-0.5">
-                              <span className="font-display text-[27px] font-extrabold text-dnv-navy">
-                                {e.locationName}
-                              </span>
-                              <span className="text-[24px] font-bold text-dnv-red">
-                                {"  "}
-                                {formatTime(e.startTime)}–{formatTime(e.endTime)}
-                              </span>
+                            <div key={e.id} className="py-1">
+                              <div className="flex flex-wrap items-baseline gap-x-3">
+                                <span className="font-display text-[30px] font-extrabold leading-tight text-dnv-navy">
+                                  {e.locationName}
+                                </span>
+                                <span className="text-[26px] font-bold text-dnv-red">
+                                  {formatTime(e.startTime)}–
+                                  {formatTime(e.endTime)}
+                                </span>
+                              </div>
+                              {e.address && (
+                                <div className="text-[21px] font-semibold leading-tight text-gray-500">
+                                  {e.address}
+                                </div>
+                              )}
                             </div>
                           ))
                         )}
