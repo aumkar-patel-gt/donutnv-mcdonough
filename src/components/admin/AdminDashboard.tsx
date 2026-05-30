@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Announcement,
@@ -67,6 +68,25 @@ export function AdminDashboard({
           Log out
         </button>
       </div>
+
+      {/* Quick link to the auto-generated weekly post graphic */}
+      <Link
+        href="/this-week"
+        className="mt-5 flex items-center justify-between gap-3 rounded-2xl bg-dnv-blue px-5 py-4 text-white shadow transition hover:bg-dnv-blue-dark"
+      >
+        <span className="flex items-center gap-3">
+          <span className="text-2xl">📸</span>
+          <span>
+            <span className="block font-display text-lg font-extrabold">
+              Get this week&apos;s Instagram graphic
+            </span>
+            <span className="text-sm text-white/85">
+              Auto-made from your stops — download &amp; post. No Canva!
+            </span>
+          </span>
+        </span>
+        <span className="text-2xl">→</span>
+      </Link>
 
       {!dbReady && (
         <div className="mt-4 rounded-xl bg-amber-100 px-4 py-3 text-sm font-semibold text-amber-800">
