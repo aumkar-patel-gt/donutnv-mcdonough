@@ -157,15 +157,15 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
             </div>
 
             {/* days list */}
-            <div className="relative mt-6 flex-1 px-10">
-              <div className="space-y-4">
+            <div className="relative mt-5 flex-1 px-10">
+              <div className="space-y-3">
                 {days.map((d) => {
                   const iso = toIso(d);
                   const dayEvents = byDate.get(iso) ?? [];
                   return (
                     <div
                       key={iso}
-                      className="flex min-h-[112px] items-stretch overflow-hidden rounded-2xl bg-white/95"
+                      className="flex min-h-[96px] items-stretch overflow-hidden rounded-2xl bg-white/95"
                     >
                       <div className="flex w-[160px] flex-col items-center justify-center bg-dnv-red px-2 py-4 text-white">
                         <span className="font-display text-[30px] font-extrabold uppercase leading-none">
@@ -208,11 +208,11 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
             </div>
 
             {/* footer */}
-            <div className="relative px-10 pb-8 pt-5 text-center text-white">
-              <p className="font-display text-[30px] font-extrabold">
+            <div className="relative px-10 pb-5 pt-4 text-center text-white">
+              <p className="font-display text-[30px] font-extrabold leading-tight">
                 Hot Donuts • Fresh Lemonade
               </p>
-              <p className="text-[24px] font-bold text-white/85">
+              <p className="text-[24px] font-bold leading-tight text-white/85">
                 @donutnvmcdonoughga
               </p>
             </div>
