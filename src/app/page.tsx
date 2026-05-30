@@ -113,7 +113,17 @@ export default async function HomePage() {
             </Link>
           </div>
         </div>
-        <div className="h-[60px] w-full bg-white wave-bottom" />
+        <svg
+          className="block h-[70px] w-full"
+          viewBox="0 0 1440 70"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path
+            fill="#ffffff"
+            d="M0,40 C240,75 480,75 720,48 C960,21 1200,21 1440,40 L1440,70 L0,70 Z"
+          />
+        </svg>
       </section>
 
       {/* THIS WEEK */}
