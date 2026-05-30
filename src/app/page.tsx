@@ -37,6 +37,18 @@ export default async function HomePage() {
     <>
       <AlertBanner items={announcements} />
 
+      {/* Wordmark band under the awning */}
+      <div className="bg-white py-5 text-center">
+        <Image
+          src="/brand/wordmark-web.jpg"
+          alt="DonutNV"
+          width={1200}
+          height={300}
+          priority
+          className="mx-auto h-12 w-auto sm:h-16"
+        />
+      </div>
+
       {/* HERO: Where are we today */}
       <section className="relative overflow-hidden bg-gradient-to-b from-dnv-blue to-dnv-blue-dark text-white">
         {/* subtle polka-dot texture */}
@@ -159,8 +171,8 @@ export default async function HomePage() {
       </section>
 
       {/* CTA strip */}
-      <section className="bg-dnv-red">
-        <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-4 py-10 text-center text-white sm:flex-row sm:justify-between sm:text-left">
+      <section className="-mb-16 bg-dnv-red">
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-4 pb-6 pt-10 text-center text-white sm:flex-row sm:justify-between sm:text-left">
           <div>
             <h2 className="font-display text-2xl font-extrabold">
               {site.slogan}
@@ -176,6 +188,18 @@ export default async function HomePage() {
             Request a Booking
           </Link>
         </div>
+        {/* wave flowing red into the navy footer */}
+        <svg
+          className="block h-[70px] w-full"
+          viewBox="0 0 1440 70"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path
+            fill="#0b2a4a"
+            d="M0,40 C240,75 480,75 720,48 C960,21 1200,21 1440,40 L1440,70 L0,70 Z"
+          />
+        </svg>
       </section>
     </>
   );

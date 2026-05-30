@@ -30,6 +30,10 @@ export function SiteFooter() {
       <div className="border-t border-white/10 py-4 text-center text-xs text-white/50">
         © {new Date().getFullYear()} {site.name}. An independently owned DonutNV
         franchise.
+        <span className="px-1">·</span>
+        <Link href="/admin" className="text-white/50 hover:text-dnv-red">
+          Owner Login
+        </Link>
       </div>
     </footer>
   );
