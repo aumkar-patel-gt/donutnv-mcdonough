@@ -49,6 +49,18 @@ export function SiteHeader() {
           >
             Book a Truck
           </Link>
+          <Link
+            href="/admin"
+            className="ml-1 inline-flex items-center gap-1.5 rounded-full border-2 border-dnv-blue px-4 py-2 font-bold text-dnv-blue transition hover:bg-dnv-blue hover:text-white"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path
+                d="M12 15a2 2 0 100-4 2 2 0 000 4zm6-6V8a6 6 0 10-12 0v1a3 3 0 00-3 3v6a3 3 0 003 3h12a3 3 0 003-3v-6a3 3 0 00-3-3zM8 8a4 4 0 118 0v1H8V8z"
+                fill="currentColor"
+              />
+            </svg>
+            Owner Login
+          </Link>
         </nav>
 
         <button
@@ -80,6 +92,19 @@ export function SiteHeader() {
                 {l.label}
               </Link>
             ))}
+            <Link
+              href="/admin"
+              onClick={() => setOpen(false)}
+              className="mt-1 inline-flex items-center gap-2 rounded-lg bg-dnv-blue px-3 py-3 font-bold text-white"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path
+                  d="M12 15a2 2 0 100-4 2 2 0 000 4zm6-6V8a6 6 0 10-12 0v1a3 3 0 00-3 3v6a3 3 0 003 3h12a3 3 0 003-3v-6a3 3 0 00-3-3zM8 8a4 4 0 118 0v1H8V8z"
+                  fill="currentColor"
+                />
+              </svg>
+              Owner Login
+            </Link>
           </nav>
         </div>
       )}
