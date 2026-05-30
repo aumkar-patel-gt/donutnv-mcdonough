@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState } from "react";
-import Image from "next/image";
 import { ScheduleEvent } from "@/lib/types";
 import {
   addDays,
@@ -51,10 +50,26 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
     setDownloading(true);
     try {
       const { toPng } = await import("html-to-image");
-      const dataUrl = await toPng(cardRef.current, {
-        pixelRatio: 2,
-        cacheBust: true,
-      });
+
+      // Make sure all images inside the card are fully loaded first.
+      const imgs = Array.from(cardRef.current.querySelectorAll("img"));
+      await Promise.all(
+        imgs.map((img) =>
+          img.complete && img.naturalWidth > 0
+            ? Promise.resolve()
+            : new Promise((res) => {
+                img.onload = res;
+                img.onerror = res;
+              })
+        )
+      );
+
+      const opts = { pixelRatio: 2, cacheBust: true, backgroundColor: "#0e6fd1" };
+      // First pass warms the cache; second pass captures reliably (known
+      // html-to-image quirk where the first render can miss images).
+      await toPng(cardRef.current, opts);
+      const dataUrl = await toPng(cardRef.current, opts);
+
       const link = document.createElement("a");
       link.download = `donutnv-schedule-${toIso(weekStart)}.png`;
       link.href = dataUrl;
@@ -118,7 +133,9 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
             {/* header */}
             <div className="relative px-14 pt-10 text-center text-white">
               <div className="mx-auto mb-4 flex h-[150px] w-[150px] items-center justify-center rounded-full bg-white shadow-lg">
-                <Image
+                {/* plain <img> (not next/image) so html-to-image can capture it */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src="/brand/logo-badge.png"
                   alt="DonutNV"
                   width={140}
