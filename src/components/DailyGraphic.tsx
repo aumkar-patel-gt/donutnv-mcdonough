@@ -3,6 +3,12 @@
 import { useRef, useState } from "react";
 import { ScheduleEvent } from "@/lib/types";
 import { addDays, formatTime, toIso } from "@/lib/format";
+import {
+  AwningBottom,
+  AwningTop,
+  Deco,
+  StripedBackground,
+} from "./graphic/shared";
 
 const DAY_FULL = [
   "Sunday",
@@ -13,6 +19,11 @@ const DAY_FULL = [
   "Friday",
   "Saturday",
 ];
+
+// Canvas is 1080x1400 (portrait, close to the Canva design proportions).
+const W = 1080;
+const H = 1400;
+const SCALE = 0.3889; // -> 420px wide on screen
 
 export function DailyGraphic({ events }: { events: ScheduleEvent[] }) {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -26,8 +37,9 @@ export function DailyGraphic({ events }: { events: ScheduleEvent[] }) {
   const dateLabel = date.toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
+    year: "numeric",
   });
-  const dayName = DAY_FULL[date.getDay()];
+  const dayName = DAY_FULL[date.getDay()].toUpperCase();
 
   async function download() {
     if (!cardRef.current) return;
@@ -37,7 +49,7 @@ export function DailyGraphic({ events }: { events: ScheduleEvent[] }) {
       const imgs = Array.from(cardRef.current.querySelectorAll("img"));
       await Promise.all(
         imgs.map((img) =>
-          img.complete && img.naturalWidth > 0
+          img.complete
             ? Promise.resolve()
             : new Promise((res) => {
                 img.onload = res;
@@ -45,11 +57,7 @@ export function DailyGraphic({ events }: { events: ScheduleEvent[] }) {
               })
         )
       );
-      const opts = {
-        pixelRatio: 2,
-        cacheBust: true,
-        backgroundColor: "#0e6fd1",
-      };
+      const opts = { pixelRatio: 2, cacheBust: true, backgroundColor: "#0b3f86" };
       await toPng(cardRef.current, opts);
       const dataUrl = await toPng(cardRef.current, opts);
       const link = document.createElement("a");
@@ -66,7 +74,6 @@ export function DailyGraphic({ events }: { events: ScheduleEvent[] }) {
 
   return (
     <div className="flex flex-col items-center">
-      {/* Day picker */}
       <div className="mb-5 flex items-center gap-3">
         <button
           onClick={() => setDayOffset((d) => d - 1)}
@@ -88,102 +95,162 @@ export function DailyGraphic({ events }: { events: ScheduleEvent[] }) {
         </button>
       </div>
 
-      {/* Square 1080x1080 graphic, scaled to 420px on screen (0.3889) */}
       <div
         className="overflow-hidden rounded-xl shadow-2xl"
-        style={{ width: 420, height: 420 }}
+        style={{ width: W * SCALE, height: H * SCALE }}
       >
         <div
           className="origin-top-left"
-          style={{ transform: "scale(0.3889)", width: 1080, height: 1080 }}
+          style={{ transform: `scale(${SCALE})`, width: W, height: H }}
         >
           <div
             ref={cardRef}
-            style={{ width: 1080, height: 1080 }}
-            className="relative flex flex-col bg-gradient-to-b from-dnv-blue to-dnv-blue-dark"
+            style={{ width: W, height: H }}
+            className="relative flex flex-col overflow-hidden bg-[#0b3f86]"
           >
-            {/* polka dots */}
-            <div
-              className="pointer-events-none absolute inset-0 opacity-15"
-              style={{
-                backgroundImage:
-                  "radial-gradient(circle, #ffffff 3px, transparent 3.5px)",
-                backgroundSize: "48px 48px",
-              }}
-            />
+            <StripedBackground />
 
-            <AwningStrip />
+            <AwningTop />
 
-            {/* header */}
-            <div className="relative px-16 pt-10 text-center text-white">
-              <div className="mx-auto mb-5 flex h-[150px] w-[150px] items-center justify-center rounded-full bg-white shadow-lg">
+            {/* top decorations + logo */}
+            <div className="relative">
+              <Deco
+                src="/brand/deco-donuts.png"
+                alt=""
+                className="absolute left-6 top-2 w-[230px]"
+              />
+              <Deco
+                src="/brand/deco-mascot.png"
+                alt=""
+                className="absolute right-4 top-0 w-[240px]"
+              />
+              <div className="flex justify-center pt-6">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/brand/logo-badge.png"
                   alt="DonutNV"
-                  width={140}
-                  height={140}
-                  className="h-[140px] w-[140px]"
+                  className="h-[150px] w-[150px] rounded-full bg-white shadow-lg"
                 />
               </div>
-              <p className="font-display text-[40px] font-extrabold uppercase tracking-wide text-white/90">
+            </div>
+
+            {/* DAY + date */}
+            <div className="relative mt-3 text-center text-white">
+              <h1
+                className="font-display font-extrabold leading-none"
+                style={{ fontSize: 92, textShadow: "0 4px 10px rgba(0,0,0,.35)" }}
+              >
                 {dayName}
-              </p>
-              <p className="font-display text-[34px] font-bold text-white/75">
-                {dateLabel}
+              </h1>
+              <p
+                className="mt-3 font-display font-bold text-white/90"
+                style={{ fontSize: 44 }}
+              >
+                “{dateLabel}”
               </p>
             </div>
 
-            {/* body */}
-            <div className="relative flex flex-1 flex-col items-center justify-center px-14 text-center">
-              {dayEvents.length === 0 ? (
-                <div className="rounded-3xl bg-white/95 px-12 py-14">
-                  <p className="font-display text-[60px] font-extrabold leading-tight text-dnv-navy">
-                    No stops today
-                  </p>
-                  <p className="mt-3 text-[34px] font-bold text-dnv-red">
-                    Check back soon! 🍩
-                  </p>
-                </div>
-              ) : (
-                <>
-                  <p className="font-display text-[64px] font-extrabold leading-none text-white drop-shadow">
-                    FIND US AT
-                  </p>
-                  <div className="mt-6 w-full space-y-5">
-                    {dayEvents.map((e) => (
+            {/* FIND US AT */}
+            <div className="relative mt-6 text-center">
+              <span
+                className="font-display font-extrabold text-white"
+                style={{ fontSize: 66, textShadow: "0 4px 10px rgba(0,0,0,.35)" }}
+              >
+                – FIND US AT –
+              </span>
+            </div>
+
+            {/* event card(s) */}
+            <div className="relative mt-5 flex flex-1 flex-col justify-start px-12">
+              <div className="rounded-[36px] bg-[#eceef0] px-10 py-8 shadow-xl">
+                {dayEvents.length === 0 ? (
+                  <div className="py-8 text-center">
+                    <p
+                      className="font-display font-extrabold text-dnv-navy"
+                      style={{ fontSize: 56 }}
+                    >
+                      No stops today
+                    </p>
+                    <p
+                      className="mt-2 font-bold text-dnv-red"
+                      style={{ fontSize: 34 }}
+                    >
+                      Check back soon! 🍩
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-7">
+                    {dayEvents.map((e, i) => (
                       <div
                         key={e.id}
-                        className="rounded-3xl bg-white/95 px-10 py-8 shadow-lg"
+                        className={
+                          "text-center " +
+                          (i > 0 ? "border-t-2 border-gray-300 pt-7" : "")
+                        }
                       >
-                        <p className="font-display text-[52px] font-extrabold leading-tight text-dnv-navy">
-                          {e.locationName}
+                        <p
+                          className="font-display font-extrabold leading-tight text-dnv-navy"
+                          style={{ fontSize: 50 }}
+                        >
+                          {e.title}
                         </p>
-                        <p className="mt-2 inline-block rounded-full bg-dnv-red px-7 py-2 font-display text-[40px] font-extrabold text-white">
-                          {formatTime(e.startTime)} – {formatTime(e.endTime)}
+                        <div className="my-3 flex justify-center">
+                          <span
+                            className="rounded-full bg-dnv-red px-9 py-2 font-display font-extrabold text-white"
+                            style={{ fontSize: 42 }}
+                          >
+                            {formatTime(e.startTime)} – {formatTime(e.endTime)}
+                          </span>
+                        </div>
+                        <p
+                          className="font-semibold text-gray-500"
+                          style={{ fontSize: 30 }}
+                        >
+                          {e.address || e.locationName}
                         </p>
-                        {e.address && (
-                          <p className="mt-4 text-[28px] font-semibold text-gray-600">
-                            📍 {e.address}
-                          </p>
-                        )}
                       </div>
                     ))}
                   </div>
-                </>
-              )}
+                )}
+              </div>
             </div>
 
-            {/* footer */}
-            <div className="relative px-10 pb-5 pt-4 text-center text-white">
-              <p className="font-display text-[34px] font-extrabold leading-tight">
-                Hot Donuts • Fresh Lemonade
+            {/* bottom decorations */}
+            <div className="relative h-[230px]">
+              <Deco
+                src="/brand/deco-lemonade.png"
+                alt=""
+                className="absolute bottom-2 left-8 w-[170px]"
+              />
+              <Deco
+                src="/brand/deco-truck.png"
+                alt=""
+                className="absolute bottom-2 left-1/2 w-[330px] -translate-x-1/2"
+              />
+              <Deco
+                src="/brand/deco-bucket.png"
+                alt=""
+                className="absolute bottom-2 right-8 w-[210px]"
+              />
+            </div>
+
+            {/* contact */}
+            <div className="relative pb-3 text-center text-white">
+              <p
+                className="font-display font-extrabold leading-tight"
+                style={{ fontSize: 40 }}
+              >
+                MCDONOUGHGA@DONUTNV.COM
               </p>
-              <p className="text-[26px] font-bold leading-tight text-white/85">
-                @donutnvmcdonoughga
+              <p
+                className="font-display font-extrabold leading-tight"
+                style={{ fontSize: 40 }}
+              >
+                (678) 780-4090
               </p>
             </div>
-            <AwningStripBottom />
+
+            <AwningBottom height={50} />
           </div>
         </div>
       </div>
@@ -205,40 +272,8 @@ export function DailyGraphic({ events }: { events: ScheduleEvent[] }) {
         {downloading ? "Preparing image…" : "Download today's graphic"}
       </button>
       <p className="mt-3 max-w-sm text-center text-sm text-gray-500">
-        A square daily reminder, perfect for an Instagram post or story.
+        A daily reminder post — pick the day, download, and post to Instagram.
       </p>
-    </div>
-  );
-}
-
-function AwningStrip() {
-  return (
-    <div className="relative flex h-[60px] w-full">
-      {Array.from({ length: 12 }).map((_, i) => (
-        <div
-          key={i}
-          className="h-full flex-1"
-          style={{
-            backgroundColor: i % 2 === 0 ? "#e11b22" : "#b9151b",
-            borderBottomLeftRadius: "50% 90%",
-            borderBottomRightRadius: "50% 90%",
-          }}
-        />
-      ))}
-    </div>
-  );
-}
-
-function AwningStripBottom() {
-  return (
-    <div className="relative flex h-[24px] w-full">
-      {Array.from({ length: 12 }).map((_, i) => (
-        <div
-          key={i}
-          className="h-full flex-1"
-          style={{ backgroundColor: i % 2 === 0 ? "#e11b22" : "#b9151b" }}
-        />
-      ))}
     </div>
   );
 }

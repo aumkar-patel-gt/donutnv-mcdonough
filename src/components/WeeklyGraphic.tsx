@@ -2,33 +2,28 @@
 
 import { useRef, useState } from "react";
 import { ScheduleEvent } from "@/lib/types";
+import { addDays, formatTime, startOfWeek, toIso } from "@/lib/format";
 import {
-  addDays,
-  formatTime,
-  parseLocalDate,
-  startOfWeek,
-  toIso,
-} from "@/lib/format";
+  AwningBottom,
+  AwningTop,
+  Deco,
+  StripedBackground,
+} from "./graphic/shared";
 
-const DAY_NAMES = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-];
+const DAY_ABBR = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+
+// Portrait canvas matching the Canva weekly design.
+const W = 1080;
+const H = 1400;
+const SCALE = 0.3889;
 
 export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [weekOffset, setWeekOffset] = useState(0);
   const [downloading, setDownloading] = useState(false);
 
-  const base = addDays(new Date(), weekOffset * 7);
-  const weekStart = startOfWeek(base);
+  const weekStart = startOfWeek(addDays(new Date(), weekOffset * 7));
   const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
-  const weekEnd = days[6];
 
   const byDate = new Map<string, ScheduleEvent[]>();
   for (const e of events) {
@@ -37,25 +32,15 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
     byDate.set(e.date, arr);
   }
 
-  const rangeLabel = `${weekStart.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-  })} – ${weekEnd.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-  })}`;
-
   async function download() {
     if (!cardRef.current) return;
     setDownloading(true);
     try {
       const { toPng } = await import("html-to-image");
-
-      // Make sure all images inside the card are fully loaded first.
       const imgs = Array.from(cardRef.current.querySelectorAll("img"));
       await Promise.all(
         imgs.map((img) =>
-          img.complete && img.naturalWidth > 0
+          img.complete
             ? Promise.resolve()
             : new Promise((res) => {
                 img.onload = res;
@@ -63,13 +48,9 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
               })
         )
       );
-
-      const opts = { pixelRatio: 2, cacheBust: true, backgroundColor: "#0e6fd1" };
-      // First pass warms the cache; second pass captures reliably (known
-      // html-to-image quirk where the first render can miss images).
+      const opts = { pixelRatio: 2, cacheBust: true, backgroundColor: "#0b3f86" };
       await toPng(cardRef.current, opts);
       const dataUrl = await toPng(cardRef.current, opts);
-
       const link = document.createElement("a");
       link.download = `donutnv-schedule-${toIso(weekStart)}.png`;
       link.href = dataUrl;
@@ -84,7 +65,6 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
 
   return (
     <div className="flex flex-col items-center">
-      {/* Week controls */}
       <div className="mb-5 flex items-center gap-3">
         <button
           onClick={() => setWeekOffset((w) => w - 1)}
@@ -106,122 +86,146 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
         </button>
       </div>
 
-      {/* The graphic — fixed Instagram portrait size (1080x1350), scaled to fit
-          screen. Wrapper uses the SCALED dimensions (420x525) so it doesn't
-          reserve the full unscaled height. */}
       <div
         className="overflow-hidden rounded-xl shadow-2xl"
-        style={{ width: 420, height: 525 }}
+        style={{ width: W * SCALE, height: H * SCALE }}
       >
         <div
           className="origin-top-left"
-          style={{ transform: "scale(0.3889)", width: 1080, height: 1350 }}
+          style={{ transform: `scale(${SCALE})`, width: W, height: H }}
         >
           <div
             ref={cardRef}
-            style={{ width: 1080, height: 1350 }}
-            className="relative flex flex-col bg-gradient-to-b from-dnv-blue to-dnv-blue-dark"
+            style={{ width: W, height: H }}
+            className="relative flex flex-col overflow-hidden bg-[#0b3f86]"
           >
-            {/* polka dots */}
-            <div
-              className="pointer-events-none absolute inset-0 opacity-15"
-              style={{
-                backgroundImage:
-                  "radial-gradient(circle, #ffffff 3px, transparent 3.5px)",
-                backgroundSize: "48px 48px",
-              }}
-            />
+            <StripedBackground />
+            <AwningTop />
 
-            {/* top awning */}
-            <AwningStrip />
-
-            {/* header */}
-            <div className="relative px-14 pt-10 text-center text-white">
-              <div className="mx-auto mb-4 flex h-[150px] w-[150px] items-center justify-center rounded-full bg-white shadow-lg">
-                {/* plain <img> (not next/image) so html-to-image can capture it */}
+            {/* header: donuts | logo+THIS WEEK | mascot */}
+            <div className="relative flex items-center justify-center px-4 pt-3">
+              <Deco
+                src="/brand/deco-donuts.png"
+                alt=""
+                className="absolute left-6 top-0 w-[200px]"
+              />
+              <Deco
+                src="/brand/deco-mascot.png"
+                alt=""
+                className="absolute right-4 top-0 w-[210px]"
+              />
+              <div className="flex flex-col items-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/brand/logo-badge.png"
                   alt="DonutNV"
-                  width={140}
-                  height={140}
-                  className="h-[140px] w-[140px]"
+                  className="h-[120px] w-[120px] rounded-full bg-white shadow-lg"
                 />
+                <h1
+                  className="font-display font-extrabold text-white"
+                  style={{ fontSize: 80, textShadow: "0 4px 10px rgba(0,0,0,.35)" }}
+                >
+                  THIS WEEK
+                </h1>
               </div>
-              <h1 className="font-display text-[72px] font-extrabold leading-none">
-                THIS WEEK
-              </h1>
-              <p className="mt-2 font-display text-[34px] font-bold text-white/90">
-                {rangeLabel}
-              </p>
             </div>
 
-            {/* days list */}
-            <div className="relative mt-5 flex-1 px-10">
-              <div className="space-y-3">
-                {days.map((d) => {
-                  const iso = toIso(d);
-                  const dayEvents = byDate.get(iso) ?? [];
-                  return (
+            {/* rows */}
+            <div className="relative mt-2 flex flex-1 flex-col justify-center gap-3 px-8 pb-2">
+              {days.map((d) => {
+                const iso = toIso(d);
+                const dayEvents = byDate.get(iso) ?? [];
+                const dateNum = d.toLocaleDateString("en-US", {
+                  month: "numeric",
+                  day: "numeric",
+                });
+                return (
+                  <div key={iso} className="flex items-stretch gap-3">
+                    {/* day chip */}
                     <div
-                      key={iso}
-                      className="flex min-h-[96px] items-stretch overflow-hidden rounded-2xl bg-white/95"
+                      className="flex w-[150px] flex-col items-center justify-center rounded-2xl bg-dnv-red px-2 py-2 text-center text-white"
+                      style={{ minHeight: 96 }}
                     >
-                      <div className="flex w-[160px] flex-col items-center justify-center bg-dnv-red px-2 py-4 text-white">
-                        <span className="font-display text-[30px] font-extrabold uppercase leading-none">
-                          {DAY_NAMES[d.getDay()].slice(0, 3)}
-                        </span>
-                        <span className="mt-1 text-[24px] font-bold">
-                          {d.getDate()}
-                        </span>
-                      </div>
-                      <div className="flex flex-1 flex-col justify-center px-6 py-4">
-                        {dayEvents.length === 0 ? (
-                          <span className="text-[26px] font-semibold text-gray-400">
-                            — No stops —
-                          </span>
-                        ) : (
-                          dayEvents.map((e) => (
-                            <div key={e.id} className="py-1">
-                              <div className="flex flex-wrap items-baseline gap-x-3">
-                                <span className="font-display text-[30px] font-extrabold leading-tight text-dnv-navy">
-                                  {e.locationName}
-                                </span>
-                                <span className="text-[26px] font-bold text-dnv-red">
-                                  {formatTime(e.startTime)}–
-                                  {formatTime(e.endTime)}
-                                </span>
-                              </div>
-                              {e.address && (
-                                <div className="text-[21px] font-semibold leading-tight text-gray-500">
-                                  {e.address}
-                                </div>
-                              )}
-                            </div>
-                          ))
-                        )}
-                      </div>
+                      <span
+                        className="font-display font-extrabold leading-none"
+                        style={{ fontSize: 30 }}
+                      >
+                        {DAY_ABBR[d.getDay()]}
+                      </span>
+                      <span
+                        className="mt-1 font-bold leading-none"
+                        style={{ fontSize: 24 }}
+                      >
+                        {dateNum}
+                      </span>
                     </div>
-                  );
-                })}
-              </div>
+
+                    {/* event card */}
+                    <div className="flex flex-1 flex-col justify-center rounded-2xl bg-[#eceef0] px-6 py-3">
+                      {dayEvents.length === 0 ? (
+                        <span
+                          className="font-semibold text-gray-400"
+                          style={{ fontSize: 26 }}
+                        >
+                          — No stops —
+                        </span>
+                      ) : (
+                        dayEvents.map((e, i) => (
+                          <div
+                            key={e.id}
+                            className={i > 0 ? "mt-2 border-t border-gray-300 pt-2" : ""}
+                          >
+                            <span
+                              className="font-display font-extrabold leading-tight text-dnv-navy"
+                              style={{ fontSize: 30 }}
+                            >
+                              {e.title}
+                            </span>
+                            <div
+                              className="font-semibold leading-tight text-gray-500"
+                              style={{ fontSize: 24 }}
+                            >
+                              {e.locationName}
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+
+                    {/* time chip */}
+                    <div
+                      className="flex w-[200px] flex-col items-center justify-center gap-1 rounded-2xl bg-[#1e63b8] px-2 py-2 text-center text-white"
+                      style={{ minHeight: 96 }}
+                    >
+                      {dayEvents.length === 0 ? (
+                        <span style={{ fontSize: 22 }} className="text-white/60">
+                          —
+                        </span>
+                      ) : (
+                        dayEvents.map((e, i) => (
+                          <span
+                            key={e.id}
+                            className={
+                              "font-display font-extrabold leading-tight " +
+                              (i > 0 ? "border-t border-white/30 pt-1" : "")
+                            }
+                            style={{ fontSize: 25 }}
+                          >
+                            {formatTime(e.startTime)}–{formatTime(e.endTime)}
+                          </span>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
-            {/* footer */}
-            <div className="relative px-10 pb-5 pt-4 text-center text-white">
-              <p className="font-display text-[30px] font-extrabold leading-tight">
-                Hot Donuts • Fresh Lemonade
-              </p>
-              <p className="text-[24px] font-bold leading-tight text-white/85">
-                @donutnvmcdonoughga
-              </p>
-            </div>
-            <AwningStripBottom />
+            <AwningBottom height={60} />
           </div>
         </div>
       </div>
 
-      {/* Download button */}
       <button
         onClick={download}
         disabled={downloading}
@@ -242,38 +246,6 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
         Saves a ready-to-post image to your phone. Then just open Instagram and
         post it!
       </p>
-    </div>
-  );
-}
-
-function AwningStrip() {
-  return (
-    <div className="relative flex h-[60px] w-full">
-      {Array.from({ length: 12 }).map((_, i) => (
-        <div
-          key={i}
-          className="h-full flex-1"
-          style={{
-            backgroundColor: i % 2 === 0 ? "#e11b22" : "#b9151b",
-            borderBottomLeftRadius: "50% 90%",
-            borderBottomRightRadius: "50% 90%",
-          }}
-        />
-      ))}
-    </div>
-  );
-}
-
-function AwningStripBottom() {
-  return (
-    <div className="relative flex h-[24px] w-full">
-      {Array.from({ length: 12 }).map((_, i) => (
-        <div
-          key={i}
-          className="h-full flex-1"
-          style={{ backgroundColor: i % 2 === 0 ? "#e11b22" : "#b9151b" }}
-        />
-      ))}
     </div>
   );
 }
