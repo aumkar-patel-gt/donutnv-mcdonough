@@ -17,7 +17,7 @@ const ROW_PITCH = 9.55; // vertical distance between row tops, %
 const ROW_HEIGHT = 9.0; // height of each row box, %
 const COL_RED = { left: 1.7, width: 15.0 }; // red day chip
 const COL_GRAY = { left: 17.6, width: 64.7 }; // gray event card
-const COL_BLUE = { left: 84.1, width: 15.9 }; // blue time chip
+const COL_BLUE = { left: 83.1, width: 15.9 }; // blue time chip
 
 export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
   const cardRef = useRef<HTMLDivElement>(null);
