@@ -11,14 +11,13 @@ const W = 1545;
 const H = 2000;
 const SCALE = 420 / W;
 
-/* --- Layout config (percentages of the card) ---
-   Nudge these if the text doesn't sit perfectly on the template boxes. */
-const ROWS_TOP = 26.8; // where the first row begins (% from top)
-const ROWS_BOTTOM = 92.2; // where the last row ends
-const ROW_GAP = 14; // px gap between rows (at full size)
-const COL_RED = { left: 2.4, width: 14.6 }; // day chip
-const COL_GRAY = { left: 17.6, width: 64.2 }; // event card
-const COL_BLUE = { left: 82.4, width: 15.4 }; // time chip
+/* --- Layout config (measured from the template image) --- */
+const ROW_TOP0 = 26.2; // top of the first (Monday) row, % from top
+const ROW_PITCH = 9.55; // vertical distance between row tops, %
+const ROW_HEIGHT = 9.0; // height of each row box, %
+const COL_RED = { left: 1.7, width: 15.0 }; // red day chip
+const COL_GRAY = { left: 17.6, width: 64.7 }; // gray event card
+const COL_BLUE = { left: 82.3, width: 15.9 }; // blue time chip
 
 export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -66,8 +65,6 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
     }
   }
 
-  const rowsHeight = ROWS_BOTTOM - ROWS_TOP;
-
   return (
     <div className="flex flex-col items-center">
       <div className="mb-5 flex items-center gap-3">
@@ -112,120 +109,128 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
               className="absolute inset-0 h-full w-full object-cover"
             />
 
-            {/* Rows overlay */}
-            <div
-              className="absolute left-0 right-0 flex flex-col"
-              style={{
-                top: `${ROWS_TOP}%`,
-                height: `${rowsHeight}%`,
-                gap: ROW_GAP,
-              }}
-            >
-              {days.map((d) => {
-                const iso = toIso(d);
-                const dayEvents = byDate.get(iso) ?? [];
-                const dateNum = d.toLocaleDateString("en-US", {
-                  month: "numeric",
-                  day: "numeric",
-                });
-                return (
-                  <div key={iso} className="relative flex-1">
-                    {/* red day chip */}
-                    <div
-                      className="absolute inset-y-0 flex flex-col items-center justify-center text-center text-white"
-                      style={{
-                        left: `${COL_RED.left}%`,
-                        width: `${COL_RED.width}%`,
-                      }}
+            {/* Rows overlay — each row absolutely positioned over its template box */}
+            {days.map((d, idx) => {
+              const iso = toIso(d);
+              const dayEvents = byDate.get(iso) ?? [];
+              const dateNum = d.toLocaleDateString("en-US", {
+                month: "numeric",
+                day: "numeric",
+              });
+              const rowTop = ROW_TOP0 + idx * ROW_PITCH;
+              const multi = dayEvents.length > 1;
+              return (
+                <div
+                  key={iso}
+                  className="absolute"
+                  style={{
+                    top: `${rowTop}%`,
+                    height: `${ROW_HEIGHT}%`,
+                    left: 0,
+                    right: 0,
+                  }}
+                >
+                  {/* red day chip */}
+                  <div
+                    className="absolute inset-y-0 flex flex-col items-center justify-center text-center text-white"
+                    style={{
+                      left: `${COL_RED.left}%`,
+                      width: `${COL_RED.width}%`,
+                    }}
+                  >
+                    <span
+                      className="font-fredoka font-bold leading-none"
+                      style={{ fontSize: 48 }}
                     >
-                      <span
-                        className="font-fredoka font-bold leading-none"
-                        style={{ fontSize: 40 }}
-                      >
-                        {DAY_ABBR[d.getDay()]}
-                      </span>
-                      <span
-                        className="mt-1 font-fredoka font-medium leading-none"
-                        style={{ fontSize: 30 }}
-                      >
-                        {dateNum}
-                      </span>
-                    </div>
-
-                    {/* gray event card */}
-                    <div
-                      className="absolute inset-y-0 flex flex-col items-center justify-center px-8 text-center"
-                      style={{
-                        left: `${COL_GRAY.left}%`,
-                        width: `${COL_GRAY.width}%`,
-                      }}
+                      {DAY_ABBR[d.getDay()]}
+                    </span>
+                    <span
+                      className="mt-1.5 font-fredoka font-semibold leading-none"
+                      style={{ fontSize: 36 }}
                     >
-                      {dayEvents.length === 0 ? (
-                        <span
-                          className="font-semibold text-gray-400"
-                          style={{ fontSize: 32 }}
-                        >
-                          — No stops —
-                        </span>
-                      ) : (
-                        dayEvents.map((e, i) => (
-                          <div
-                            key={e.id}
-                            className={
-                              i > 0
-                                ? "mt-2 border-t border-gray-300 pt-2"
-                                : ""
-                            }
-                          >
-                            <div
-                              className="font-fredoka font-bold leading-tight text-dnv-navy"
-                              style={{ fontSize: dayEvents.length > 1 ? 34 : 44 }}
-                            >
-                              {e.title}
-                            </div>
-                            <div
-                              className="font-semibold leading-tight text-gray-500"
-                              style={{ fontSize: dayEvents.length > 1 ? 27 : 34 }}
-                            >
-                              📍 {e.locationName}
-                            </div>
-                          </div>
-                        ))
-                      )}
-                    </div>
-
-                    {/* blue time chip */}
-                    <div
-                      className="absolute inset-y-0 flex flex-col items-center justify-center gap-1 px-1 text-center text-white"
-                      style={{
-                        left: `${COL_BLUE.left}%`,
-                        width: `${COL_BLUE.width}%`,
-                      }}
-                    >
-                      {dayEvents.length === 0 ? (
-                        <span style={{ fontSize: 22 }} className="text-white/70">
-                          —
-                        </span>
-                      ) : (
-                        dayEvents.map((e, i) => (
-                          <span
-                            key={e.id}
-                            className={
-                              "font-fredoka font-bold leading-tight " +
-                              (i > 0 ? "border-t border-white/30 pt-1" : "")
-                            }
-                            style={{ fontSize: dayEvents.length > 1 ? 25 : 31 }}
-                          >
-                            {formatTime(e.startTime).replace(":00", "")}–
-                            {formatTime(e.endTime).replace(":00", "")}
-                          </span>
-                        ))
-                      )}
-                    </div>
+                      {dateNum}
+                    </span>
                   </div>
-                );
-              })}
-            </div>
+
+                  {/* gray event card: name / location / address+pin */}
+                  <div
+                    className="absolute inset-y-0 flex flex-col items-center justify-center px-8 text-center leading-tight"
+                    style={{
+                      left: `${COL_GRAY.left}%`,
+                      width: `${COL_GRAY.width}%`,
+                    }}
+                  >
+                    {dayEvents.length === 0 ? (
+                      <span
+                        className="font-semibold text-gray-400"
+                        style={{ fontSize: 32 }}
+                      >
+                        — No stops —
+                      </span>
+                    ) : (
+                      dayEvents.map((e, i) => (
+                        <div
+                          key={e.id}
+                          className={
+                            i > 0 ? "mt-1.5 border-t border-gray-300 pt-1.5" : ""
+                          }
+                        >
+                          <div
+                            className="font-fredoka font-bold leading-tight text-dnv-navy"
+                            style={{ fontSize: multi ? 32 : 42 }}
+                          >
+                            {e.title}
+                          </div>
+                          <div
+                            className="font-semibold leading-tight text-gray-600"
+                            style={{ fontSize: multi ? 24 : 30 }}
+                          >
+                            {e.locationName}
+                          </div>
+                          {e.address && (
+                            <div
+                              className="font-medium leading-tight text-gray-500"
+                              style={{ fontSize: multi ? 21 : 26 }}
+                            >
+                              📍 {e.address}
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  {/* blue time chip */}
+                  <div
+                    className="absolute inset-y-0 flex flex-col items-center justify-center gap-1 px-2 text-center text-white"
+                    style={{
+                      left: `${COL_BLUE.left}%`,
+                      width: `${COL_BLUE.width}%`,
+                    }}
+                  >
+                    {dayEvents.length === 0 ? (
+                      <span style={{ fontSize: 26 }} className="text-white/70">
+                        —
+                      </span>
+                    ) : (
+                      dayEvents.map((e, i) => (
+                        <span
+                          key={e.id}
+                          className={
+                            "font-fredoka font-bold leading-tight " +
+                            (i > 0 ? "border-t border-white/30 pt-1" : "")
+                          }
+                          style={{ fontSize: multi ? 30 : 38 }}
+                        >
+                          {formatTime(e.startTime).replace(":00", "")}–
+                          {formatTime(e.endTime).replace(":00", "")}
+                        </span>
+                      ))
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
