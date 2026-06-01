@@ -167,7 +167,7 @@ function MonthView({
         {monthLabel}
       </h3>
       <div className="grid grid-cols-7 gap-1 text-center text-xs font-bold uppercase text-gray-400">
-        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+        {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
           <div key={d} className="py-2">
             {d}
           </div>

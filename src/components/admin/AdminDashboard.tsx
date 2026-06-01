@@ -78,10 +78,10 @@ export function AdminDashboard({
           <span className="text-2xl">📸</span>
           <span>
             <span className="block font-display text-lg font-extrabold">
-              Get this week&apos;s Instagram graphic
+              Make an Instagram graphic
             </span>
             <span className="text-sm text-white/85">
-              Auto-made from your stops — download &amp; post. No Canva!
+              Weekly schedule + daily reminders — download &amp; post. No Canva!
             </span>
           </span>
         </span>

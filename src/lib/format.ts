@@ -45,7 +45,9 @@ export function formatDateShort(iso: string): string {
 export function startOfWeek(d: Date): Date {
   const r = new Date(d);
   r.setHours(0, 0, 0, 0);
-  r.setDate(r.getDate() - r.getDay()); // Sunday start
+  // Monday start: getDay() is 0=Sun..6=Sat; map Sunday(0) to 6 days back.
+  const offset = (r.getDay() + 6) % 7;
+  r.setDate(r.getDate() - offset);
   return r;
 }
 
