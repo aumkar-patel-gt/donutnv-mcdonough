@@ -179,15 +179,15 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
                           >
                             <div
                               className="font-fredoka font-bold leading-tight text-dnv-navy"
-                              style={{ fontSize: dayEvents.length > 1 ? 32 : 40 }}
+                              style={{ fontSize: dayEvents.length > 1 ? 34 : 44 }}
                             >
                               {e.title}
                             </div>
                             <div
                               className="font-semibold leading-tight text-gray-500"
-                              style={{ fontSize: dayEvents.length > 1 ? 25 : 30 }}
+                              style={{ fontSize: dayEvents.length > 1 ? 27 : 34 }}
                             >
-                              {e.locationName}
+                              📍 {e.locationName}
                             </div>
                           </div>
                         ))

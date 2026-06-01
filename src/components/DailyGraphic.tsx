@@ -21,8 +21,9 @@ const SCALE = 420 / W;
 
 /* --- Layout config (% of card). Nudge if text doesn't align. --- */
 const DAY_TOP = 8.5; // DAY name centered here (over the logo area? no—just below logo)
-const FIND_BOX = { top: 44, bottom: 64 }; // the gray "FIND US AT" content box
-const RED_PILL = { top: 50, height: 6.5 }; // the red time pill inside the box
+// Measured from the template image:
+const FIND_BOX = { top: 42.5, bottom: 68 }; // the gray "FIND US AT" content box
+const RED_PILL = { top: 51.6, height: 7.8 }; // the red time pill inside the box
 
 export function DailyGraphic({ events }: { events: ScheduleEvent[] }) {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -128,8 +129,8 @@ export function DailyGraphic({ events }: { events: ScheduleEvent[] }) {
                 {dayName}
               </div>
               <div
-                className="mt-3 font-fredoka font-medium text-white/90"
-                style={{ fontSize: 48 }}
+                className="mt-3 font-fredoka font-semibold text-white/90"
+                style={{ fontSize: 56 }}
               >
                 {dateLabel}
               </div>
@@ -138,27 +139,30 @@ export function DailyGraphic({ events }: { events: ScheduleEvent[] }) {
             {/* Content inside the gray FIND US AT box */}
             {single ? (
               <>
-                {/* event name — above the red pill */}
+                {/* event name — centered between box top and the red pill */}
                 <div
-                  className="absolute left-0 right-0 px-16 text-center"
-                  style={{ top: `${RED_PILL.top - 7}%` }}
+                  className="absolute left-0 right-0 flex items-center justify-center px-16 text-center"
+                  style={{
+                    top: `${FIND_BOX.top}%`,
+                    height: `${RED_PILL.top - FIND_BOX.top}%`,
+                  }}
                 >
                   <span
                     className="font-fredoka font-bold leading-tight text-dnv-navy"
-                    style={{ fontSize: 60 }}
+                    style={{ fontSize: 62 }}
                   >
                     {dayEvents[0]?.title ?? "No stops today"}
                   </span>
                 </div>
 
-                {/* time — inside the red pill */}
+                {/* time — vertically centered inside the red pill */}
                 <div
                   className="absolute left-0 right-0 flex items-center justify-center text-center"
                   style={{ top: `${RED_PILL.top}%`, height: `${RED_PILL.height}%` }}
                 >
                   <span
                     className="font-fredoka font-bold leading-none text-white"
-                    style={{ fontSize: 58 }}
+                    style={{ fontSize: 60 }}
                   >
                     {dayEvents[0]
                       ? `${formatTime(dayEvents[0].startTime)} – ${formatTime(
@@ -168,16 +172,19 @@ export function DailyGraphic({ events }: { events: ScheduleEvent[] }) {
                   </span>
                 </div>
 
-                {/* location — below the red pill */}
+                {/* location — centered between the pill and box bottom, with pin */}
                 <div
-                  className="absolute left-0 right-0 px-20 text-center"
-                  style={{ top: `${RED_PILL.top + RED_PILL.height + 2.5}%` }}
+                  className="absolute left-0 right-0 flex items-center justify-center gap-2 px-16 text-center"
+                  style={{
+                    top: `${RED_PILL.top + RED_PILL.height}%`,
+                    height: `${FIND_BOX.bottom - (RED_PILL.top + RED_PILL.height)}%`,
+                  }}
                 >
                   <span
                     className="font-semibold text-gray-600"
-                    style={{ fontSize: 34 }}
+                    style={{ fontSize: 36 }}
                   >
-                    {dayEvents[0]?.address || dayEvents[0]?.locationName || ""}
+                    📍 {dayEvents[0]?.address || dayEvents[0]?.locationName || ""}
                   </span>
                 </div>
               </>
