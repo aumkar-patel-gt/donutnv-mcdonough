@@ -116,20 +116,20 @@ export function DailyGraphic({ events }: { events: ScheduleEvent[] }) {
               className="absolute inset-0 h-full w-full object-cover"
             />
 
-            {/* DAY + date, sits under the logo (top area is empty in template) */}
+            {/* DAY + date, centered between the logo and "FIND US AT" */}
             <div
               className="absolute left-0 right-0 text-center text-white"
-              style={{ top: `${DAY_TOP + 19}%` }}
+              style={{ top: `${DAY_TOP + 15.5}%` }}
             >
               <div
                 className="font-fredoka font-bold leading-none"
-                style={{ fontSize: 96, textShadow: "0 4px 10px rgba(0,0,0,.35)" }}
+                style={{ fontSize: 100, textShadow: "0 4px 10px rgba(0,0,0,.35)" }}
               >
                 {dayName}
               </div>
               <div
                 className="mt-3 font-fredoka font-medium text-white/90"
-                style={{ fontSize: 46 }}
+                style={{ fontSize: 48 }}
               >
                 {dateLabel}
               </div>
@@ -140,12 +140,12 @@ export function DailyGraphic({ events }: { events: ScheduleEvent[] }) {
               <>
                 {/* event name — above the red pill */}
                 <div
-                  className="absolute left-0 right-0 px-20 text-center"
-                  style={{ top: `${RED_PILL.top - 8}%` }}
+                  className="absolute left-0 right-0 px-16 text-center"
+                  style={{ top: `${RED_PILL.top - 7}%` }}
                 >
                   <span
                     className="font-fredoka font-bold leading-tight text-dnv-navy"
-                    style={{ fontSize: 50 }}
+                    style={{ fontSize: 60 }}
                   >
                     {dayEvents[0]?.title ?? "No stops today"}
                   </span>
@@ -157,8 +157,8 @@ export function DailyGraphic({ events }: { events: ScheduleEvent[] }) {
                   style={{ top: `${RED_PILL.top}%`, height: `${RED_PILL.height}%` }}
                 >
                   <span
-                    className="font-fredoka font-bold text-white"
-                    style={{ fontSize: 50 }}
+                    className="font-fredoka font-bold leading-none text-white"
+                    style={{ fontSize: 58 }}
                   >
                     {dayEvents[0]
                       ? `${formatTime(dayEvents[0].startTime)} – ${formatTime(
@@ -170,12 +170,12 @@ export function DailyGraphic({ events }: { events: ScheduleEvent[] }) {
 
                 {/* location — below the red pill */}
                 <div
-                  className="absolute left-0 right-0 px-24 text-center"
+                  className="absolute left-0 right-0 px-20 text-center"
                   style={{ top: `${RED_PILL.top + RED_PILL.height + 2.5}%` }}
                 >
                   <span
                     className="font-semibold text-gray-600"
-                    style={{ fontSize: 30 }}
+                    style={{ fontSize: 34 }}
                   >
                     {dayEvents[0]?.address || dayEvents[0]?.locationName || ""}
                   </span>

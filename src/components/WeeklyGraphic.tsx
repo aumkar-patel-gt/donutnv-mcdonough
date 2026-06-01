@@ -140,13 +140,13 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
                     >
                       <span
                         className="font-fredoka font-bold leading-none"
-                        style={{ fontSize: 34 }}
+                        style={{ fontSize: 40 }}
                       >
                         {DAY_ABBR[d.getDay()]}
                       </span>
                       <span
                         className="mt-1 font-fredoka font-medium leading-none"
-                        style={{ fontSize: 26 }}
+                        style={{ fontSize: 30 }}
                       >
                         {dateNum}
                       </span>
@@ -154,7 +154,7 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
 
                     {/* gray event card */}
                     <div
-                      className="absolute inset-y-0 flex flex-col justify-center px-8"
+                      className="absolute inset-y-0 flex flex-col items-center justify-center px-8 text-center"
                       style={{
                         left: `${COL_GRAY.left}%`,
                         width: `${COL_GRAY.width}%`,
@@ -163,7 +163,7 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
                       {dayEvents.length === 0 ? (
                         <span
                           className="font-semibold text-gray-400"
-                          style={{ fontSize: 28 }}
+                          style={{ fontSize: 32 }}
                         >
                           — No stops —
                         </span>
@@ -173,19 +173,19 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
                             key={e.id}
                             className={
                               i > 0
-                                ? "mt-1.5 border-t border-gray-300 pt-1.5"
+                                ? "mt-2 border-t border-gray-300 pt-2"
                                 : ""
                             }
                           >
                             <div
                               className="font-fredoka font-bold leading-tight text-dnv-navy"
-                              style={{ fontSize: dayEvents.length > 1 ? 28 : 34 }}
+                              style={{ fontSize: dayEvents.length > 1 ? 32 : 40 }}
                             >
                               {e.title}
                             </div>
                             <div
                               className="font-semibold leading-tight text-gray-500"
-                              style={{ fontSize: dayEvents.length > 1 ? 22 : 26 }}
+                              style={{ fontSize: dayEvents.length > 1 ? 25 : 30 }}
                             >
                               {e.locationName}
                             </div>
@@ -214,7 +214,7 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
                               "font-fredoka font-bold leading-tight " +
                               (i > 0 ? "border-t border-white/30 pt-1" : "")
                             }
-                            style={{ fontSize: dayEvents.length > 1 ? 22 : 27 }}
+                            style={{ fontSize: dayEvents.length > 1 ? 25 : 31 }}
                           >
                             {formatTime(e.startTime).replace(":00", "")}–
                             {formatTime(e.endTime).replace(":00", "")}
