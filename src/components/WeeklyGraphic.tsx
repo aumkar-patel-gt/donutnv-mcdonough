@@ -3,19 +3,22 @@
 import { useRef, useState } from "react";
 import { ScheduleEvent } from "@/lib/types";
 import { addDays, formatTime, startOfWeek, toIso } from "@/lib/format";
-import {
-  AwningBottom,
-  AwningTop,
-  Deco,
-  StripedBackground,
-} from "./graphic/shared";
 
 const DAY_ABBR = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
-// Portrait canvas matching the Canva weekly design.
-const W = 1080;
-const H = 1400;
-const SCALE = 0.3889;
+// Canvas matches the template image aspect (portrait ~8.5x11).
+const W = 1545;
+const H = 2000;
+const SCALE = 420 / W;
+
+/* --- Layout config (percentages of the card) ---
+   Nudge these if the text doesn't sit perfectly on the template boxes. */
+const ROWS_TOP = 26.8; // where the first row begins (% from top)
+const ROWS_BOTTOM = 92.2; // where the last row ends
+const ROW_GAP = 14; // px gap between rows (at full size)
+const COL_RED = { left: 2.4, width: 14.6 }; // day chip
+const COL_GRAY = { left: 17.6, width: 64.2 }; // event card
+const COL_BLUE = { left: 82.4, width: 15.4 }; // time chip
 
 export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -63,6 +66,8 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
     }
   }
 
+  const rowsHeight = ROWS_BOTTOM - ROWS_TOP;
+
   return (
     <div className="flex flex-col items-center">
       <div className="mb-5 flex items-center gap-3">
@@ -97,41 +102,25 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
           <div
             ref={cardRef}
             style={{ width: W, height: H }}
-            className="relative flex flex-col overflow-hidden bg-[#0b3f86]"
+            className="relative overflow-hidden bg-[#0b3f86]"
           >
-            <StripedBackground />
-            <AwningTop />
+            {/* Template background */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/brand/template-weekly.png"
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+            />
 
-            {/* header: donuts | logo+THIS WEEK | mascot */}
-            <div className="relative flex items-center justify-center px-4 pt-3">
-              <Deco
-                src="/brand/deco-donuts.png"
-                alt=""
-                className="absolute left-6 top-0 w-[200px]"
-              />
-              <Deco
-                src="/brand/deco-mascot.png"
-                alt=""
-                className="absolute right-4 top-0 w-[210px]"
-              />
-              <div className="flex flex-col items-center">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/brand/logo-badge.png"
-                  alt="DonutNV"
-                  className="h-[120px] w-[120px] rounded-full bg-white shadow-lg"
-                />
-                <h1
-                  className="font-fredoka font-extrabold text-white"
-                  style={{ fontSize: 80, textShadow: "0 4px 10px rgba(0,0,0,.35)" }}
-                >
-                  THIS WEEK
-                </h1>
-              </div>
-            </div>
-
-            {/* rows */}
-            <div className="relative mt-2 flex flex-1 flex-col justify-center gap-3 px-8 pb-2">
+            {/* Rows overlay */}
+            <div
+              className="absolute left-0 right-0 flex flex-col"
+              style={{
+                top: `${ROWS_TOP}%`,
+                height: `${rowsHeight}%`,
+                gap: ROW_GAP,
+              }}
+            >
               {days.map((d) => {
                 const iso = toIso(d);
                 const dayEvents = byDate.get(iso) ?? [];
@@ -140,32 +129,41 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
                   day: "numeric",
                 });
                 return (
-                  <div key={iso} className="flex items-stretch gap-3">
-                    {/* day chip */}
+                  <div key={iso} className="relative flex-1">
+                    {/* red day chip */}
                     <div
-                      className="flex w-[150px] flex-col items-center justify-center rounded-2xl bg-dnv-red px-2 py-2 text-center text-white"
-                      style={{ minHeight: 96 }}
+                      className="absolute inset-y-0 flex flex-col items-center justify-center text-center text-white"
+                      style={{
+                        left: `${COL_RED.left}%`,
+                        width: `${COL_RED.width}%`,
+                      }}
                     >
                       <span
-                        className="font-fredoka font-extrabold leading-none"
-                        style={{ fontSize: 30 }}
+                        className="font-fredoka font-bold leading-none"
+                        style={{ fontSize: 34 }}
                       >
                         {DAY_ABBR[d.getDay()]}
                       </span>
                       <span
-                        className="mt-1 font-bold leading-none"
-                        style={{ fontSize: 24 }}
+                        className="mt-1 font-fredoka font-medium leading-none"
+                        style={{ fontSize: 26 }}
                       >
                         {dateNum}
                       </span>
                     </div>
 
-                    {/* event card */}
-                    <div className="flex flex-1 flex-col justify-center rounded-2xl bg-[#eceef0] px-6 py-3">
+                    {/* gray event card */}
+                    <div
+                      className="absolute inset-y-0 flex flex-col justify-center px-8"
+                      style={{
+                        left: `${COL_GRAY.left}%`,
+                        width: `${COL_GRAY.width}%`,
+                      }}
+                    >
                       {dayEvents.length === 0 ? (
                         <span
                           className="font-semibold text-gray-400"
-                          style={{ fontSize: 26 }}
+                          style={{ fontSize: 28 }}
                         >
                           — No stops —
                         </span>
@@ -173,17 +171,21 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
                         dayEvents.map((e, i) => (
                           <div
                             key={e.id}
-                            className={i > 0 ? "mt-2 border-t border-gray-300 pt-2" : ""}
+                            className={
+                              i > 0
+                                ? "mt-1.5 border-t border-gray-300 pt-1.5"
+                                : ""
+                            }
                           >
-                            <span
-                              className="font-fredoka font-extrabold leading-tight text-dnv-navy"
-                              style={{ fontSize: 30 }}
+                            <div
+                              className="font-fredoka font-bold leading-tight text-dnv-navy"
+                              style={{ fontSize: dayEvents.length > 1 ? 28 : 34 }}
                             >
                               {e.title}
-                            </span>
+                            </div>
                             <div
                               className="font-semibold leading-tight text-gray-500"
-                              style={{ fontSize: 24 }}
+                              style={{ fontSize: dayEvents.length > 1 ? 22 : 26 }}
                             >
                               {e.locationName}
                             </div>
@@ -192,13 +194,16 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
                       )}
                     </div>
 
-                    {/* time chip */}
+                    {/* blue time chip */}
                     <div
-                      className="flex w-[200px] flex-col items-center justify-center gap-1 rounded-2xl bg-[#06294f] px-2 py-2 text-center text-white"
-                      style={{ minHeight: 96 }}
+                      className="absolute inset-y-0 flex flex-col items-center justify-center gap-1 px-1 text-center text-white"
+                      style={{
+                        left: `${COL_BLUE.left}%`,
+                        width: `${COL_BLUE.width}%`,
+                      }}
                     >
                       {dayEvents.length === 0 ? (
-                        <span style={{ fontSize: 22 }} className="text-white/60">
+                        <span style={{ fontSize: 22 }} className="text-white/70">
                           —
                         </span>
                       ) : (
@@ -206,12 +211,13 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
                           <span
                             key={e.id}
                             className={
-                              "font-fredoka font-extrabold leading-tight " +
+                              "font-fredoka font-bold leading-tight " +
                               (i > 0 ? "border-t border-white/30 pt-1" : "")
                             }
-                            style={{ fontSize: 25 }}
+                            style={{ fontSize: dayEvents.length > 1 ? 22 : 27 }}
                           >
-                            {formatTime(e.startTime)}–{formatTime(e.endTime)}
+                            {formatTime(e.startTime).replace(":00", "")}–
+                            {formatTime(e.endTime).replace(":00", "")}
                           </span>
                         ))
                       )}
@@ -220,8 +226,6 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
                 );
               })}
             </div>
-
-            <AwningBottom height={60} />
           </div>
         </div>
       </div>

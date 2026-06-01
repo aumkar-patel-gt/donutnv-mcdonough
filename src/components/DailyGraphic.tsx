@@ -3,12 +3,6 @@
 import { useRef, useState } from "react";
 import { ScheduleEvent } from "@/lib/types";
 import { addDays, formatTime, toIso } from "@/lib/format";
-import {
-  AwningBottom,
-  AwningTop,
-  Deco,
-  StripedBackground,
-} from "./graphic/shared";
 
 const DAY_FULL = [
   "Sunday",
@@ -20,10 +14,15 @@ const DAY_FULL = [
   "Saturday",
 ];
 
-// Canvas is 1080x1400 (portrait, close to the Canva design proportions).
-const W = 1080;
-const H = 1400;
-const SCALE = 0.3889; // -> 420px wide on screen
+// Canvas matches the daily template aspect (portrait ~8.5x11).
+const W = 1545;
+const H = 2000;
+const SCALE = 420 / W;
+
+/* --- Layout config (% of card). Nudge if text doesn't align. --- */
+const DAY_TOP = 8.5; // DAY name centered here (over the logo area? no—just below logo)
+const FIND_BOX = { top: 44, bottom: 64 }; // the gray "FIND US AT" content box
+const RED_PILL = { top: 50, height: 6.5 }; // the red time pill inside the box
 
 export function DailyGraphic({ events }: { events: ScheduleEvent[] }) {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -40,6 +39,7 @@ export function DailyGraphic({ events }: { events: ScheduleEvent[] }) {
     year: "numeric",
   });
   const dayName = DAY_FULL[date.getDay()].toUpperCase();
+  const single = dayEvents.length <= 1;
 
   async function download() {
     if (!cardRef.current) return;
@@ -106,151 +106,122 @@ export function DailyGraphic({ events }: { events: ScheduleEvent[] }) {
           <div
             ref={cardRef}
             style={{ width: W, height: H }}
-            className="relative flex flex-col overflow-hidden bg-[#0b3f86]"
+            className="relative overflow-hidden bg-[#0b3f86]"
           >
-            <StripedBackground />
+            {/* Template background */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/brand/template-daily.png"
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+            />
 
-            <AwningTop />
-
-            {/* top decorations + logo */}
-            <div className="relative">
-              <Deco
-                src="/brand/deco-donuts.png"
-                alt=""
-                className="absolute left-6 top-2 w-[230px]"
-              />
-              <Deco
-                src="/brand/deco-mascot.png"
-                alt=""
-                className="absolute right-4 top-0 w-[240px]"
-              />
-              <div className="flex justify-center pt-6">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/brand/logo-badge.png"
-                  alt="DonutNV"
-                  className="h-[150px] w-[150px] rounded-full bg-white shadow-lg"
-                />
-              </div>
-            </div>
-
-            {/* DAY + date */}
-            <div className="relative mt-3 text-center text-white">
-              <h1
-                className="font-fredoka font-extrabold leading-none"
-                style={{ fontSize: 92, textShadow: "0 4px 10px rgba(0,0,0,.35)" }}
+            {/* DAY + date, sits under the logo (top area is empty in template) */}
+            <div
+              className="absolute left-0 right-0 text-center text-white"
+              style={{ top: `${DAY_TOP + 19}%` }}
+            >
+              <div
+                className="font-fredoka font-bold leading-none"
+                style={{ fontSize: 96, textShadow: "0 4px 10px rgba(0,0,0,.35)" }}
               >
                 {dayName}
-              </h1>
-              <p
-                className="mt-3 font-fredoka font-bold text-white/90"
-                style={{ fontSize: 44 }}
+              </div>
+              <div
+                className="mt-3 font-fredoka font-medium text-white/90"
+                style={{ fontSize: 46 }}
               >
                 {dateLabel}
-              </p>
-            </div>
-
-            {/* FIND US AT */}
-            <div className="relative mt-6 text-center">
-              <span
-                className="font-fredoka font-extrabold text-white"
-                style={{ fontSize: 66, textShadow: "0 4px 10px rgba(0,0,0,.35)" }}
-              >
-                – FIND US AT –
-              </span>
-            </div>
-
-            {/* event card(s) */}
-            <div className="relative mt-5 flex flex-1 flex-col justify-start px-12">
-              <div className="rounded-[36px] bg-[#eceef0] px-10 py-8 shadow-xl">
-                {dayEvents.length === 0 ? (
-                  <div className="py-8 text-center">
-                    <p
-                      className="font-fredoka font-extrabold text-dnv-navy"
-                      style={{ fontSize: 56 }}
-                    >
-                      No stops today
-                    </p>
-                    <p
-                      className="mt-2 font-bold text-dnv-red"
-                      style={{ fontSize: 34 }}
-                    >
-                      Check back soon! 🍩
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-7">
-                    {dayEvents.map((e, i) => (
-                      <div
-                        key={e.id}
-                        className={
-                          "text-center " +
-                          (i > 0 ? "border-t-2 border-gray-300 pt-7" : "")
-                        }
-                      >
-                        <p
-                          className="font-fredoka font-extrabold leading-tight text-dnv-navy"
-                          style={{ fontSize: 50 }}
-                        >
-                          {e.title}
-                        </p>
-                        <div className="my-3 flex justify-center">
-                          <span
-                            className="rounded-full bg-dnv-red px-9 py-2 font-fredoka font-extrabold text-white"
-                            style={{ fontSize: 42 }}
-                          >
-                            {formatTime(e.startTime)} – {formatTime(e.endTime)}
-                          </span>
-                        </div>
-                        <p
-                          className="font-semibold text-gray-500"
-                          style={{ fontSize: 30 }}
-                        >
-                          {e.address || e.locationName}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
             </div>
 
-            {/* bottom decorations */}
-            <div className="relative h-[230px]">
-              <Deco
-                src="/brand/deco-lemonade.png"
-                alt=""
-                className="absolute bottom-2 left-8 w-[170px]"
-              />
-              <Deco
-                src="/brand/deco-truck.png"
-                alt=""
-                className="absolute bottom-2 left-1/2 w-[330px] -translate-x-1/2"
-              />
-              <Deco
-                src="/brand/deco-bucket.png"
-                alt=""
-                className="absolute bottom-2 right-8 w-[210px]"
-              />
-            </div>
+            {/* Content inside the gray FIND US AT box */}
+            {single ? (
+              <>
+                {/* event name — above the red pill */}
+                <div
+                  className="absolute left-0 right-0 px-20 text-center"
+                  style={{ top: `${RED_PILL.top - 8}%` }}
+                >
+                  <span
+                    className="font-fredoka font-bold leading-tight text-dnv-navy"
+                    style={{ fontSize: 50 }}
+                  >
+                    {dayEvents[0]?.title ?? "No stops today"}
+                  </span>
+                </div>
 
-            {/* contact */}
-            <div className="relative pb-3 text-center text-white">
-              <p
-                className="font-fredoka font-extrabold leading-tight"
-                style={{ fontSize: 40 }}
-              >
-                MCDONOUGHGA@DONUTNV.COM
-              </p>
-              <p
-                className="font-fredoka font-extrabold leading-tight"
-                style={{ fontSize: 40 }}
-              >
-                (678) 780-4090
-              </p>
-            </div>
+                {/* time — inside the red pill */}
+                <div
+                  className="absolute left-0 right-0 flex items-center justify-center text-center"
+                  style={{ top: `${RED_PILL.top}%`, height: `${RED_PILL.height}%` }}
+                >
+                  <span
+                    className="font-fredoka font-bold text-white"
+                    style={{ fontSize: 50 }}
+                  >
+                    {dayEvents[0]
+                      ? `${formatTime(dayEvents[0].startTime)} – ${formatTime(
+                          dayEvents[0].endTime
+                        )}`
+                      : "Check back soon!"}
+                  </span>
+                </div>
 
-            <AwningBottom height={50} />
+                {/* location — below the red pill */}
+                <div
+                  className="absolute left-0 right-0 px-24 text-center"
+                  style={{ top: `${RED_PILL.top + RED_PILL.height + 2.5}%` }}
+                >
+                  <span
+                    className="font-semibold text-gray-600"
+                    style={{ fontSize: 30 }}
+                  >
+                    {dayEvents[0]?.address || dayEvents[0]?.locationName || ""}
+                  </span>
+                </div>
+              </>
+            ) : (
+              /* 2+ events: stack compact cards centered in the box */
+              <div
+                className="absolute left-0 right-0 flex flex-col justify-center gap-4 px-24"
+                style={{
+                  top: `${FIND_BOX.top}%`,
+                  height: `${FIND_BOX.bottom - FIND_BOX.top}%`,
+                }}
+              >
+                {dayEvents.map((e, i) => (
+                  <div
+                    key={e.id}
+                    className={
+                      "text-center " +
+                      (i > 0 ? "border-t-2 border-gray-300 pt-3" : "")
+                    }
+                  >
+                    <div
+                      className="font-fredoka font-bold leading-tight text-dnv-navy"
+                      style={{ fontSize: 38 }}
+                    >
+                      {e.title}
+                    </div>
+                    <div className="my-1 flex justify-center">
+                      <span
+                        className="rounded-full bg-dnv-red px-6 py-1 font-fredoka font-bold text-white"
+                        style={{ fontSize: 30 }}
+                      >
+                        {formatTime(e.startTime)} – {formatTime(e.endTime)}
+                      </span>
+                    </div>
+                    <div
+                      className="font-semibold leading-tight text-gray-500"
+                      style={{ fontSize: 24 }}
+                    >
+                      {e.address || e.locationName}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
