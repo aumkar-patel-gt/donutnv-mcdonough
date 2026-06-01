@@ -26,7 +26,11 @@ export interface BookingRequest {
   email: string;
   phone: string;
   eventDate: string;
+  timeFrame: string;
   eventType: string;
+  servings: string;
+  venue: string;
+  heardAbout: string;
   message: string;
   createdAt: string;
 }

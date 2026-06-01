@@ -12,6 +12,15 @@ const eventTypes = [
   "Other",
 ];
 
+const hearOptions = [
+  "Instagram",
+  "Facebook",
+  "Google Search",
+  "Friend / Referral",
+  "Saw the truck",
+  "Other",
+];
+
 export default function BookPage() {
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "error">(
     "idle"
@@ -84,6 +93,14 @@ export default function BookPage() {
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Event Date" name="eventDate" type="date" required />
+          <Field
+            label="Time Frame"
+            name="timeFrame"
+            placeholder="e.g. 2:00 PM – 5:00 PM"
+            required
+          />
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label className="block text-sm font-bold text-dnv-navy">
               Event Type
@@ -98,15 +115,40 @@ export default function BookPage() {
               ))}
             </select>
           </div>
+          <Field
+            label="Servings / Guest Count"
+            name="servings"
+            placeholder="e.g. 150 servings"
+            required
+          />
+        </div>
+        <Field
+          label="Location / Venue"
+          name="venue"
+          placeholder="Venue name and address"
+          required
+        />
+        <div>
+          <label className="block text-sm font-bold text-dnv-navy">
+            How did you hear about us?
+          </label>
+          <select
+            name="heardAbout"
+            className="mt-1 w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-dnv-blue focus:outline-none focus:ring-2 focus:ring-dnv-blue/30"
+          >
+            {hearOptions.map((t) => (
+              <option key={t}>{t}</option>
+            ))}
+          </select>
         </div>
         <div>
           <label className="block text-sm font-bold text-dnv-navy">
-            Tell us more
+            Anything else?
           </label>
           <textarea
             name="message"
             rows={4}
-            placeholder="Location, headcount, time, anything else…"
+            placeholder="Special requests, flavors, setup details, anything else…"
             className="mt-1 w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-dnv-blue focus:outline-none focus:ring-2 focus:ring-dnv-blue/30"
           />
         </div>
@@ -134,11 +176,13 @@ function Field({
   name,
   type = "text",
   required,
+  placeholder,
 }: {
   label: string;
   name: string;
   type?: string;
   required?: boolean;
+  placeholder?: string;
 }) {
   return (
     <div>
@@ -147,6 +191,7 @@ function Field({
         name={name}
         type={type}
         required={required}
+        placeholder={placeholder}
         className="mt-1 w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-dnv-blue focus:outline-none focus:ring-2 focus:ring-dnv-blue/30"
       />
     </div>

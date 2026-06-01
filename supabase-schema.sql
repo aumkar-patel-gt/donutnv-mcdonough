@@ -28,10 +28,20 @@ create table if not exists bookings (
   email text not null,
   phone text,
   event_date date,
+  time_frame text,
   event_type text,
+  servings text,
+  venue text,
+  heard_about text,
   message text,
   created_at timestamptz default now()
 );
+
+-- If the bookings table already existed, add the newer columns:
+alter table bookings add column if not exists time_frame text;
+alter table bookings add column if not exists servings text;
+alter table bookings add column if not exists venue text;
+alter table bookings add column if not exists heard_about text;
 
 -- Row Level Security: allow the public to READ events/announcements,
 -- and allow the public to INSERT a booking. All writes from the admin

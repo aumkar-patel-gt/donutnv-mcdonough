@@ -526,6 +526,28 @@ function BookingsList({ bookings }: { bookings: BookingRequest[] }) {
               {b.phone}
             </a>
           </p>
+          <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-gray-700">
+            {b.timeFrame && (
+              <p>
+                <span className="font-semibold">Time:</span> {b.timeFrame}
+              </p>
+            )}
+            {b.servings && (
+              <p>
+                <span className="font-semibold">Servings:</span> {b.servings}
+              </p>
+            )}
+            {b.venue && (
+              <p className="col-span-2">
+                <span className="font-semibold">Venue:</span> {b.venue}
+              </p>
+            )}
+            {b.heardAbout && (
+              <p className="col-span-2">
+                <span className="font-semibold">Heard via:</span> {b.heardAbout}
+              </p>
+            )}
+          </div>
           {b.message && (
             <p className="mt-2 rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-700">
               {b.message}

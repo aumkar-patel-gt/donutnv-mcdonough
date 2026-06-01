@@ -86,7 +86,11 @@ export async function getBookings(): Promise<BookingRequest[]> {
     email: String(row.email ?? ""),
     phone: String(row.phone ?? ""),
     eventDate: String(row.event_date ?? ""),
+    timeFrame: String(row.time_frame ?? ""),
     eventType: String(row.event_type ?? ""),
+    servings: String(row.servings ?? ""),
+    venue: String(row.venue ?? ""),
+    heardAbout: String(row.heard_about ?? ""),
     message: String(row.message ?? ""),
     createdAt: String(row.created_at ?? ""),
   }));

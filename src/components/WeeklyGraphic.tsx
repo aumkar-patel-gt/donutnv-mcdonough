@@ -140,13 +140,13 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
                   >
                     <span
                       className="font-fredoka font-bold leading-none"
-                      style={{ fontSize: 48 }}
+                      style={{ fontSize: 56 }}
                     >
                       {DAY_ABBR[d.getDay()]}
                     </span>
                     <span
                       className="mt-1.5 font-fredoka font-semibold leading-none"
-                      style={{ fontSize: 36 }}
+                      style={{ fontSize: 42 }}
                     >
                       {dateNum}
                     </span>
@@ -177,20 +177,20 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
                         >
                           <div
                             className="font-fredoka font-bold leading-tight text-dnv-navy"
-                            style={{ fontSize: multi ? 32 : 42 }}
+                            style={{ fontSize: multi ? 38 : 50 }}
                           >
                             {e.title}
                           </div>
                           <div
                             className="font-semibold leading-tight text-gray-600"
-                            style={{ fontSize: multi ? 24 : 30 }}
+                            style={{ fontSize: multi ? 29 : 37 }}
                           >
                             {e.locationName}
                           </div>
                           {e.address && (
                             <div
                               className="font-medium leading-tight text-gray-500"
-                              style={{ fontSize: multi ? 21 : 26 }}
+                              style={{ fontSize: multi ? 25 : 31 }}
                             >
                               📍 {e.address}
                             </div>
