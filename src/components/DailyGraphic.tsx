@@ -137,23 +137,23 @@ export function DailyGraphic({ events }: { events: ScheduleEvent[] }) {
             {/* DAY + date */}
             <div className="relative mt-3 text-center text-white">
               <h1
-                className="font-display font-extrabold leading-none"
+                className="font-fredoka font-extrabold leading-none"
                 style={{ fontSize: 92, textShadow: "0 4px 10px rgba(0,0,0,.35)" }}
               >
                 {dayName}
               </h1>
               <p
-                className="mt-3 font-display font-bold text-white/90"
+                className="mt-3 font-fredoka font-bold text-white/90"
                 style={{ fontSize: 44 }}
               >
-                “{dateLabel}”
+                {dateLabel}
               </p>
             </div>
 
             {/* FIND US AT */}
             <div className="relative mt-6 text-center">
               <span
-                className="font-display font-extrabold text-white"
+                className="font-fredoka font-extrabold text-white"
                 style={{ fontSize: 66, textShadow: "0 4px 10px rgba(0,0,0,.35)" }}
               >
                 – FIND US AT –
@@ -166,7 +166,7 @@ export function DailyGraphic({ events }: { events: ScheduleEvent[] }) {
                 {dayEvents.length === 0 ? (
                   <div className="py-8 text-center">
                     <p
-                      className="font-display font-extrabold text-dnv-navy"
+                      className="font-fredoka font-extrabold text-dnv-navy"
                       style={{ fontSize: 56 }}
                     >
                       No stops today
@@ -189,14 +189,14 @@ export function DailyGraphic({ events }: { events: ScheduleEvent[] }) {
                         }
                       >
                         <p
-                          className="font-display font-extrabold leading-tight text-dnv-navy"
+                          className="font-fredoka font-extrabold leading-tight text-dnv-navy"
                           style={{ fontSize: 50 }}
                         >
                           {e.title}
                         </p>
                         <div className="my-3 flex justify-center">
                           <span
-                            className="rounded-full bg-dnv-red px-9 py-2 font-display font-extrabold text-white"
+                            className="rounded-full bg-dnv-red px-9 py-2 font-fredoka font-extrabold text-white"
                             style={{ fontSize: 42 }}
                           >
                             {formatTime(e.startTime)} – {formatTime(e.endTime)}
@@ -237,13 +237,13 @@ export function DailyGraphic({ events }: { events: ScheduleEvent[] }) {
             {/* contact */}
             <div className="relative pb-3 text-center text-white">
               <p
-                className="font-display font-extrabold leading-tight"
+                className="font-fredoka font-extrabold leading-tight"
                 style={{ fontSize: 40 }}
               >
                 MCDONOUGHGA@DONUTNV.COM
               </p>
               <p
-                className="font-display font-extrabold leading-tight"
+                className="font-fredoka font-extrabold leading-tight"
                 style={{ fontSize: 40 }}
               >
                 (678) 780-4090

@@ -9,6 +9,7 @@
   --color-dnv-cream: #fff8ee;
   --font-display: var(--font-poppins), system-ui, sans-serif;
   --font-sans: var(--font-nunito), system-ui, sans-serif;
+  --font-fredoka: var(--font-fredoka), system-ui, sans-serif;
 }
 
 :root {

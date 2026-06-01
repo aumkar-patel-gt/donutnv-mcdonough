@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins, Nunito } from "next/font/google";
+import { Poppins, Nunito, Fredoka } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -14,6 +14,13 @@ const nunito = Nunito({
   subsets: ["latin"],
   weight: ["400", "600", "700"],
   variable: "--font-nunito",
+});
+
+// Rounded, playful display font for the Instagram graphics.
+const fredoka = Fredoka({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-fredoka",
 });
 
 export const metadata: Metadata = {
@@ -41,7 +48,9 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${poppins.variable} ${nunito.variable} antialiased`}>
+      <body
+        className={`${poppins.variable} ${nunito.variable} ${fredoka.variable} antialiased`}
+      >
         <SiteHeader />
         <main className="min-h-[60vh]">{children}</main>
         <SiteFooter />

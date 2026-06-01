@@ -122,7 +122,7 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
                   className="h-[120px] w-[120px] rounded-full bg-white shadow-lg"
                 />
                 <h1
-                  className="font-display font-extrabold text-white"
+                  className="font-fredoka font-extrabold text-white"
                   style={{ fontSize: 80, textShadow: "0 4px 10px rgba(0,0,0,.35)" }}
                 >
                   THIS WEEK
@@ -147,7 +147,7 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
                       style={{ minHeight: 96 }}
                     >
                       <span
-                        className="font-display font-extrabold leading-none"
+                        className="font-fredoka font-extrabold leading-none"
                         style={{ fontSize: 30 }}
                       >
                         {DAY_ABBR[d.getDay()]}
@@ -176,7 +176,7 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
                             className={i > 0 ? "mt-2 border-t border-gray-300 pt-2" : ""}
                           >
                             <span
-                              className="font-display font-extrabold leading-tight text-dnv-navy"
+                              className="font-fredoka font-extrabold leading-tight text-dnv-navy"
                               style={{ fontSize: 30 }}
                             >
                               {e.title}
@@ -194,7 +194,7 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
 
                     {/* time chip */}
                     <div
-                      className="flex w-[200px] flex-col items-center justify-center gap-1 rounded-2xl bg-[#1e63b8] px-2 py-2 text-center text-white"
+                      className="flex w-[200px] flex-col items-center justify-center gap-1 rounded-2xl bg-[#06294f] px-2 py-2 text-center text-white"
                       style={{ minHeight: 96 }}
                     >
                       {dayEvents.length === 0 ? (
@@ -206,7 +206,7 @@ export function WeeklyGraphic({ events }: { events: ScheduleEvent[] }) {
                           <span
                             key={e.id}
                             className={
-                              "font-display font-extrabold leading-tight " +
+                              "font-fredoka font-extrabold leading-tight " +
                               (i > 0 ? "border-t border-white/30 pt-1" : "")
                             }
                             style={{ fontSize: 25 }}
